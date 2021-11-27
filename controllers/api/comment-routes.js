@@ -6,12 +6,14 @@ router.get("/", (req, res) => {
     .then((dbCommentData) => res.json(dbCommentData))
     .catch((err) => {
       console.log(err);
-      res.status(400).json(err);
+      res.status(500).json(err);
     });
 });
 
 router.post("/", (req, res) => {
-  // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+    // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+   // check the session
+   if (req.session) {
   Comment.create({
     comment_text: req.body.comment_text,
     user_id: req.body.user_id,
@@ -22,9 +24,11 @@ router.post("/", (req, res) => {
       console.log(err);
       res.status(400).json(err);
     });
+  }
 });
 
 router.delete("/:id", (req, res) => {
+  if (req.session) {
   Comment.destroy({
     where: {
       id: req.params.id,
@@ -41,6 +45,7 @@ router.delete("/:id", (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
+  }
 });
 
 module.exports = router;
